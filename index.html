@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('Image.jpeg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: flex-start; 
+            align-items: center; 
+            height: 100vh;
+            margin: 0;
+            padding-left: 20px; 
+        }
+        .container {
+            background-color: #1A4D2E;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #7AB2B2;
+        }
+        input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result p {
+            text-align: left;
+            padding: 5px;
+            margin: 0;
+            font-size: 16px;
+        }
+        .result p.pass {
+            color: green;
+        }
+        .result p.fail {
+            color: red;
+        }
+        .final-message {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Password Analyzer</h2>
+        <input type="password" id="password" placeholder="Enter your password">
+        <button onclick="analyzePassword()">Analyze</button>
+        <div id="result" class="result"></div>
+        <div id="finalMessage" class="final-message"></div>
+    </div>
+
+    <script>
+        function analyzePassword() {
+            const password = document.getElementById('password').value;
+            const analysis = passwordAnalyzer(password);
+            const resultDiv = document.getElementById('result');
+            const finalMessageDiv = document.getElementById('finalMessage');
+            
+            resultDiv.innerHTML = '';
+            finalMessageDiv.innerHTML = '';
+
+            const results = [
+                { check: analysis.length, text: 'Length >= 12 characters' },
+                { check: analysis.uppercase, text: 'Contains uppercase letters' },
+                { check: analysis.lowercase, text: 'Contains lowercase letters' },
+                { check: analysis.digit, text: 'Contains digits' },
+                { check: analysis.special_char, text: 'Contains special characters' }
+            ];
+
+            let delay = 0;
+            results.forEach((result, index) => {
+                setTimeout(() => {
+                    const p = document.createElement('p');
+                    p.className = result.check ? 'pass' : 'fail';
+                    p.textContent = `${result.text}: ${result.check ? 'Pass' : 'Fail'}`;
+                    resultDiv.appendChild(p);
+
+                    if (index === results.length - 1) {
+                        setTimeout(() => {
+                            const finalMessage = analysis.is_strong ? "It's a Strong password" : 'Strengthen your password';
+                            finalMessageDiv.textContent = finalMessage;
+                        }, 1000);
+                    }
+                }, delay);
+                delay += 1000;
+            });
+        }
+
+        function passwordAnalyzer(password) {
+            return {
+                length: lengthCheck(password),
+                uppercase: uppercaseCheck(password),
+                lowercase: lowercaseCheck(password),
+                digit: digitCheck(password),
+                special_char: specialCharCheck(password),
+                is_strong: isStrong(password)
+            };
+        }
+
+        function lengthCheck(password) {
+            return password.length >= 12;
+        }
+
+        function uppercaseCheck(password) {
+            return /[A-Z]/.test(password);
+        }
+
+        function lowercaseCheck(password) {
+            return /[a-z]/.test(password);
+        }
+
+        function digitCheck(password) {
+            return /\d/.test(password);
+        }
+
+        function specialCharCheck(password) {
+            return /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        }
+
+        function isStrong(password) {
+            return lengthCheck(password) &&
+                   uppercaseCheck(password) &&
+                   lowercaseCheck(password) &&
+                   digitCheck(password) &&
+                   specialCharCheck(password);
+        }
+    </script>
+</body>
+</html>
